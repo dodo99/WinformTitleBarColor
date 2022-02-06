@@ -39,6 +39,13 @@ namespace WinformTitleBarColor
             }
             else
             {
+                if (useWindowStyle)
+                {
+                    useWindowStyle = checkBox2.Checked = false;
+
+                    ncrp = (int)WIN32Interop.DWMNCRENDERINGPOLICY.DWMNCRP_DISABLED;
+                    WIN32Interop.SetTitleBkColor(this.Handle, ncrp);
+                }
                 radioButton1.Enabled = true;
                 radioButton2.Enabled = true;
             }
@@ -64,6 +71,32 @@ namespace WinformTitleBarColor
         private void checkBoxWinStyle_Click(object sender, EventArgs e)
         {
             useWindowStyle = checkBox2.Checked;
+
+            if (useWindowStyle)
+            {
+                if (useDarkMode)
+                {
+                    useDarkMode = checkBox1.Checked = false;
+                    radioButton1.Checked = true;
+                    radioButton1.Enabled = false;
+                    radioButton2.Enabled = false;
+                }
+
+                ncrp = (int)WIN32Interop.DWMNCRENDERINGPOLICY.DWMNCRP_USEWINDOWSTYLE;
+            }
+            else
+            {
+                ncrp = (int)WIN32Interop.DWMNCRENDERINGPOLICY.DWMNCRP_DISABLED;
+            }
+
+            WIN32Interop.SetTitleBkColor(this.Handle, ncrp);
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            ncrp = (int)WIN32Interop.DWMNCRENDERINGPOLICY.DWMNCRP_DISABLED;
+
+            WIN32Interop.SetTitleBkColor(this.Handle, ncrp);
         }
     }
 
