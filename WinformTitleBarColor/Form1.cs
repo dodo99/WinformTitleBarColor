@@ -24,7 +24,9 @@ namespace WinformTitleBarColor
 
         private void checkBoxDarkmode_Click(object sender, EventArgs e)
         {
-            useDarkMode = checkBox1.Checked;
+            useDarkMode = checkBox1.Checked; 
+            if (useDarkMode && useWindowStyle) // double check setting
+                useWindowStyle = false;
 
             if (!useDarkMode)
             {
@@ -54,16 +56,16 @@ namespace WinformTitleBarColor
 
         private void DisableDarkmode_Click(object sender, EventArgs e)
         {
-            WIN32Interop.UseDarkMode(this.Handle, false);
             ncrp = (int)WIN32Interop.DWMNCRENDERINGPOLICY.DWMNCRP_DISABLED;
+            WIN32Interop.UseDarkMode(this.Handle, false);
 
             WIN32Interop.SetTitleBkColor(this.Handle, ncrp);
         }
 
         private void EnableDarkmode_Click(object sender, EventArgs e)
         {
-            WIN32Interop.UseDarkMode(this.Handle, true);
             ncrp = (int)WIN32Interop.DWMNCRENDERINGPOLICY.DWMNCRP_ENABLED;
+            WIN32Interop.UseDarkMode(this.Handle, true);
 
             WIN32Interop.SetTitleBkColor(this.Handle, ncrp);
         }
@@ -76,6 +78,9 @@ namespace WinformTitleBarColor
             {
                 if (useDarkMode)
                 {
+                    WIN32Interop.UseDarkMode(this.Handle, false);
+                    ncrp = (int)WIN32Interop.DWMNCRENDERINGPOLICY.DWMNCRP_DISABLED;
+
                     useDarkMode = checkBox1.Checked = false;
                     radioButton1.Checked = true;
                     radioButton1.Enabled = false;
@@ -121,7 +126,6 @@ namespace WinformTitleBarColor
 
         private static bool IsWindows10OrGreater(int build = -1)
         {
-            //this only for .NET 5+
             //return Environment.OSVersion.Version.Major >= 10 && Environment.OSVersion.Version.Build >= build;
             return true;
         }
@@ -144,7 +148,7 @@ namespace WinformTitleBarColor
                 return DwmSetWindowAttribute(handle, (int)attribute, ref useImmersiveDarkMode, sizeof(int)) == 0;
             }
 
-            return DwmSetWindowAttribute(handle, (int)attribute, ref useImmersiveDarkMode, sizeof(int)) == 0;
+            return false;
         }
         public enum DWMNCRENDERINGPOLICY
         {
@@ -160,16 +164,8 @@ namespace WinformTitleBarColor
 
         public static void SetTitleBkColor(IntPtr hWnd, int ncrp)
         {
-            //int ncrp = (int)DWMNCRENDERINGPOLICY.DWMNCRP_DISABLED;
-            //int ncrp = (int)DWMNCRENDERINGPOLICY.DWMNCRP_ENABLED;
-            //int ncrp = (int)DWMNCRENDERINGPOLICY.DWMNCRP_USEWINDOWSTYLE;
-
-            //HRESULT hr = DwmSetWindowAttribute(m_hWnd, DWMWA_NCRENDERING_POLICY, &ncrp, sizeof(ncrp));
-            //SetWindowPos(0, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOSIZE | SWP_NOMOVE);
-
             DwmSetWindowAttribute(hWnd, 2, ref ncrp, sizeof(DWMNCRENDERINGPOLICY));
             SetWindowPos(hWnd, IntPtr.Zero, 0, 0, 0, 0, 0x0020 | 0x0001 | 0x0002);
-
         }
-            }
+    }
 }
