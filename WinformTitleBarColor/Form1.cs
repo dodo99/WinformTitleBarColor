@@ -26,7 +26,10 @@ namespace WinformTitleBarColor
         {
             useDarkMode = checkBox1.Checked; 
             if (useDarkMode && useWindowStyle) // double check setting
+            {
                 useWindowStyle = false;
+                checkBox2.Checked = false;
+            }
 
             if (!useDarkMode)
             {
@@ -126,6 +129,7 @@ namespace WinformTitleBarColor
 
         private static bool IsWindows10OrGreater(int build = -1)
         {
+            //this only works in .NET core 5.0, so I simply return true
             //return Environment.OSVersion.Version.Major >= 10 && Environment.OSVersion.Version.Build >= build;
             return true;
         }
